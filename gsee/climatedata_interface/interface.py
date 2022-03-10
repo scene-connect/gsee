@@ -127,7 +127,7 @@ def run_interface_from_dataset(
     # Stitch together the data
     result = xr.Dataset()
     for piece in shr_mem:
-        if type(piece) == type(data):
+        if isinstance(piece, xr.Dataset):
             result = xr.merge([result, piece])
     result = result.transpose("time", "lat", "lon")
     result["time"] = data["time"]

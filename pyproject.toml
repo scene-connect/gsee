@@ -15,10 +15,15 @@ files = "."
 ignore_missing_imports = true
 module = [
   "ephem.*",
+  "gsee.climatedata_interface.kt_h_sinusfunc",
   "joblib.*",
+  "matplotlib.*",
   "mpl_toolkits.*",
   "numpy.*",
   "pandas.*",
+  "pvlib.*",
+  "ruamel_yaml",
   "scipy.*",
   "seaborn.*",
+  "setuptools.*",
 ]

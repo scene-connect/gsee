@@ -15,7 +15,7 @@ from gsee.climatedata_interface.progress import progress_bar
 
 
 def add_kd_run_gsee(
-    df: pd.DataFrame, coords: dict, frequency: str, params: dict
+    df: pd.DataFrame, coords: tuple, frequency: str, params: dict
 ) -> pd.Series:
     """
     Calculates diffuse fraction with extraterrestrial radiation and Erb's model
@@ -397,7 +397,7 @@ def decimal_hours(timeobject, rise_or_set: str) -> float:
             return ret
     elif rise_or_set == "sunrise":
         return 0.0
-    elif rise_or_set == "sunset":
+    else:
         return 23.999
 
 
