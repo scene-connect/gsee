@@ -1,9 +1,9 @@
-import pytest  # pylint: disable=unused-import
 import datetime
 import math
 import os
 
 import pandas as pd
+import pytest  # pylint: disable=unused-import
 
 import gsee.trigon
 

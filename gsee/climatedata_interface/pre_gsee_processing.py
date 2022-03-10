@@ -1,27 +1,31 @@
 import math as m
-import pandas as pd
 import warnings
-import numpy as np
-import xarray as xr
-import scipy.stats as st
 from calendar import monthrange
+
+import numpy as np
+import pandas as pd
+import scipy.stats as st
+import xarray as xr
+
+from gsee import brl_model
+from gsee import pv as pv_model
+from gsee import trigon
 from gsee.climatedata_interface import kt_h_sinusfunc as cyth
 from gsee.climatedata_interface.progress import progress_bar
-from gsee import trigon, brl_model
-from gsee import pv as pv_model
 
 
 def add_kd_run_gsee(
     df: pd.DataFrame, coords: dict, frequency: str, params: dict
 ) -> pd.Series:
     """
-    Calculates diffuse fraction with extraterrestrial radiation and Erb's model and creates
-    sinusoidal durinal cycle to create an average day for each month
+    Calculates diffuse fraction with extraterrestrial radiation and Erb's model
+    and creates sinusoidal durinal cycle to create an average day for each month
 
     Parameters
     ----------
     df : Pandas Dataframe
-        containing with single day per month and 'global_horizontal', 'temperature' column
+        containing with single day per month and 'global_horizontal', 'temperature'
+        column
 
 
     Returns
@@ -107,7 +111,8 @@ def resample_for_gsee(
     shr_mem : shared list
         shared memory where all the calculated pv time series are stored
     prog_mem : list
-        list indicating the overall progress of the computation, first value ([0]) is the total number
+        list indicating the overall progress of the computation,
+        first value ([0]) is the total number
         of coordinate tuples to compute.
     ds_pdfs : xarray Dataset, optional
         Dataset containing xk, pk values for selected coordinates.
@@ -136,7 +141,8 @@ def resample_for_gsee(
 
 def _resample_without_pdfs(df, frequency, params, i, coords, shr_mem, prog_mem):
     if frequency == "A":
-        # Create 2 days, one in spring and one in autumn, which are then calculated by GSEE
+        # Create 2 days, one in spring and one in autumn,
+        # which are then calculated by GSEE
         df.loc[df.index[-1] + pd.DateOffset(years=1)] = np.full(len(df.columns), 0)
         df_yearly12 = df.resample(rule="Q").pad()
         df_yearly12 = df_yearly12[0:-1:2]
@@ -158,8 +164,9 @@ def _resample_without_pdfs(df, frequency, params, i, coords, shr_mem, prog_mem):
 
 
 def _resample_with_pdfs(df, frequency, params, i, coords, shr_mem, prog_mem, ds_pdfs):
-    # Annual and seasonal data are first upsampled to monthly values and then for each month the
-    # corresponding number of days is drawn from the PDFs (Probability density functions)
+    # Annual and seasonal data are first upsampled to monthly values and then
+    # for each month the corresponding number of days is drawn from the
+    # PDFs (Probability density functions)
     if frequency == "S":
         df = df.resample(rule="QS-DEC").bfill()
 
@@ -217,31 +224,27 @@ def _resample_with_pdfs(df, frequency, params, i, coords, shr_mem, prog_mem, ds_
     return_pv(pv, shr_mem, prog_mem, coords, i)
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# Support functions
-# ----------------------------------------------------------------------------------------------------------------------
-
-
 def create_rand_month(xk: np.ndarray, pk: np.ndarray, n: int) -> np.ndarray:
     """
 
-        Parameters
-        ----------
-        xk : List
-            of bins of possible radiation values
-        pk : List
-            Probabilities for the bins in xk to occur
-        n : int
-            length of the month in days
+    Parameters
+    ----------
+    xk : List
+        of bins of possible radiation values
+    pk : List
+        Probabilities for the bins in xk to occur
+    n : int
+        length of the month in days
 
-        Returns
-        -------
-        List
-            of length n with randon values xk following the probabilites given in pk
+    Returns
+    -------
+    List
+        of length n with randon values xk following the probabilites given in pk
 
-        """
+    """
 
-    multi = 10000  # multiplied as .rvs only gives integer values, but we want a higher resolution
+    # multiplied as .rvs only gives integer values, but we want a higher resolution
+    multi = 10_000
     xk = xk * multi
 
     if sum(pk) and sum(pk) > 0:
@@ -259,8 +262,9 @@ def create_rand_month(xk: np.ndarray, pk: np.ndarray, n: int) -> np.ndarray:
 def clearness_index_hourly(df: pd.DataFrame, coords: tuple) -> pd.DataFrame:
     """
     Calculates hourly clearness index and also adds sunrise and sunset to the dataframe
-    as separate columns if not yet present. Following Equations from Elminir2007 (Prediction of hourly and daily
-    diffuse fraction using neural network, as compared to linear regression models)
+    as separate columns if not yet present. Following Equations from Elminir2007
+    (Prediction of hourly and daily diffuse fraction using neural network, as compared
+    to linear regression models)
 
     Parameters
     ----------
@@ -303,12 +307,13 @@ def convert_to_durinal(data: pd.DataFrame, coords: tuple, factor=1) -> pd.DataFr
     Returns
     -------
     Pandas dataframe
-        with hourly values and column 'global horizontal' following a sinusoidal function
+        with hourly values and column 'global horizontal'
+        following a sinusoidal function
     """
 
     def _upsample_df_single_day(indf):
-        """Upsamples dataframe to hourly values but only fills the days that were in the original dataframe
-        and drops all other rows
+        """Upsamples dataframe to hourly values but only fills the days
+        that were in the original dataframe and drops all other rows
         """
         df = indf.copy()
         # add line at the end so resample treats it like a whole day:
@@ -398,8 +403,9 @@ def decimal_hours(timeobject, rise_or_set: str) -> float:
 
 def return_pv(pv: pd.Series, shr_mem: list, prog_mem: list, coords: tuple, i: int):
     """
-    Does necessary stuff to pv to convert it back to xarray (adds lat, lon) and saves it to shr_mem
-    also updates and draws progress bar
+    Does necessary stuff to pv to convert it back to xarray (adds lat, lon)
+    and saves it to shr_mem
+    Also updates and draws progress bar
 
     Parameters
     ----------
@@ -408,7 +414,8 @@ def return_pv(pv: pd.Series, shr_mem: list, prog_mem: list, coords: tuple, i: in
     shr_mem : List
         shared memory where all the calculated pv time series are stored
     prog_mem : List
-        list indicating the overall progress of the computation, first value ([0]) is the total number
+        list indicating the overall progress of the computation,
+        first value ([0]) is the total number
     of coordinate tuples to compute.
     coords : Tuple
         coordinates of pv station (lat, lon)

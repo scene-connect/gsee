@@ -55,8 +55,10 @@ def conda_create_command(
     else:
         chan_string = " ".join(["-c " + i for i in chan_set])
 
-    cmd = 'conda create --name {name} --override-channels {chans} "python={py}" {deps}'.format(
-        name=env_name, chans=chan_string, deps=dep_string, py=python_version
+    cmd = (
+        f"conda create --name {env_name} "
+        f"--override-channels {chan_string}"
+        f'"python={python_version}" {dep_string}'
     )
 
     return cmd

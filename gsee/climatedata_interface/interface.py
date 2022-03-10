@@ -1,16 +1,19 @@
-from calendar import monthrange
-from itertools import product
+import logging
 import multiprocessing
 import os
 import time
+from calendar import monthrange
+from itertools import product
 
 import numpy as np
 import pandas as pd
-from scipy import spatial
 import xarray as xr
+from scipy import spatial
 
-from gsee.climatedata_interface.pre_gsee_processing import resample_for_gsee
 from gsee.climatedata_interface import util
+from gsee.climatedata_interface.pre_gsee_processing import resample_for_gsee
+
+logger = logging.getLogger(__name__)
 
 
 def run_interface_from_dataset(
@@ -85,9 +88,8 @@ def run_interface_from_dataset(
 
     if num_cores > 1:
         from joblib import Parallel, delayed, wrap_non_picklable_objects
-        from joblib.parallel import get_active_backend
 
-        print("Parallel mode: {} cores".format(num_cores))
+        logger.debug("Parallel mode: %d cores", num_cores)
         Parallel(n_jobs=num_cores)(
             delayed(wrap_non_picklable_objects(resample_for_gsee))(
                 data.sel(lat=coords[0], lon=coords[1]),
@@ -104,7 +106,7 @@ def run_interface_from_dataset(
             for i, coords in enumerate(coord_list)
         )
     else:
-        print("Single core mode")
+        logger.debug("Single core mode")
         for i, coords in enumerate(coord_list):
             resample_for_gsee(
                 data.sel(lat=coords[0], lon=coords[1]),
@@ -120,7 +122,7 @@ def run_interface_from_dataset(
             )
 
     end = time.time()
-    print("\nComputation part took: {} seconds".format(str(round(end - start, 2))))
+    logger.debug("Computation part took: %s seconds", str(round(end - start, 2)))
 
     # Stitch together the data
     result = xr.Dataset()
@@ -202,23 +204,23 @@ def run_interface(
             ds_merged["time"] = _parse_cmip_time_data(ds_merged)
         except Exception:
             raise ValueError(
-                'Parsing of "cmip5" time dimension failed. Set timeformat to None, or check your data.'
+                'Parsing of "cmip5" time dimension failed. '
+                "Set timeformat to None, or check your data."
             )
 
-    # Check whether the time dimension was recognised correctly and interpreted as time by dataset
+    # Check whether the time dimension was recognised correctly
+    # and interpreted as time by dataset
     if not type(ds_merged["time"].values[0]) is np.datetime64:
         raise ValueError(
-            'Time format not recognised. Try setting timeformat="cmip5" or check your data.'
+            "Time format not recognised. "
+            'Try setting timeformat="cmip5" or check your data.'
         )
 
     if os.path.isfile(outfile):
-        print("{} already exists --> skipping".format(outfile.split("/", -1)[-1]))
+        logger.debug("%s already exists --> skipping", outfile.split("/", -1)[-1])
     else:
-        print(
-            "{} does not yet exist --> Computing in ".format(
-                outfile.split("/", -1)[-1]
-            ),
-            end="",
+        logger.info(
+            "%s does not yet exist --> Computing in ", outfile.split("/", -1)[-1]
         )
 
         ds_pv = run_interface_from_dataset(
@@ -256,14 +258,10 @@ def run_interface(
         ds_pv.to_netcdf(path=outfile, format="NETCDF4", encoding=encoding)
 
 
-# ----------------------------------------------------------------------------------------------------------------------
-# Support functions for run_interface_from_dataset:
-# ----------------------------------------------------------------------------------------------------------------------
-
-
 def _mod_time_dim(time_dim: pd.date_range, freq: str):
     """
-    Modify Time dimension so it fits the requirements of the "resample_for_gsee" function
+    Modify Time dimension so it fits the requirements of the
+    "resample_for_gsee" function
     Parameters
     ----------
     time_dim: array
@@ -282,7 +280,8 @@ def _mod_time_dim(time_dim: pd.date_range, freq: str):
             lambda x: pd.Timestamp(year=x.year, month=1, day=1, hour=0, minute=0)
         )
     elif freq in ["S", "M"]:
-        # Seasonal data is set to middle of month, as it is often represented with the day in the middle of the season.
+        # Seasonal data is set to middle of month, as it is often represented
+        # with the day in the middle of the season.
         # Monthly data is set to middle of month
         return time_dim.map(
             lambda x: pd.Timestamp(
@@ -302,11 +301,6 @@ def _mod_time_dim(time_dim: pd.date_range, freq: str):
         )
     else:
         return time_dim
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-# Support functions for run_interface:
-# ----------------------------------------------------------------------------------------------------------------------
 
 
 def _detect_frequency(ds: xr.Dataset, frequency="detect"):
@@ -330,19 +324,20 @@ def _detect_frequency(ds: xr.Dataset, frequency="detect"):
         Detected or validated frequency.
 
     """
-    # Tries to detect frequency, otherwise falls back to manual entry, also compares if the two match:
+    # Tries to detect frequency, otherwise falls back to manual entry,
+    # also compares if the two match:
     nc_freq = None
     try:
         nc_freq = ds.attrs["frequency"]
     except KeyError:
         try:
             nc_freq = pd.DatetimeIndex(data=ds["time"].values).inferred_freq[0]
-        except:
+        except Exception:
             pass
     if not nc_freq:
-        print("> No frequency detected --> checking manually given frequency", end="")
+        logger.debug("> No frequency detected --> checking manually given frequency")
         if frequency in ["A", "S", "M", "D", "H"]:
-            print("...Manual entry is valid")
+            logger.debug("...Manual entry is valid")
             data_freq = frequency
         else:
             raise ValueError("Detect failed or manual entry is invalid.")
@@ -355,11 +350,12 @@ def _detect_frequency(ds: xr.Dataset, frequency="detect"):
             data_freq = "D"
         else:
             data_freq = nc_freq
-        print("> Detected frequency: {}".format(data_freq))
+        logger.debug("> Detected frequency: {}".format(data_freq))
 
     if frequency == "S" and data_freq not in ["A", "M", "D", "H"]:
-        print(
-            '> Frequency is detected, but is not "A", "M", "D", or "H" thus assumed some kind of seasonal'
+        logger.debug(
+            '> Frequency is detected, but is not "A", "M", "D", or "H" '
+            "thus assumed some kind of seasonal"
         )
         return frequency
     if (
@@ -368,7 +364,8 @@ def _detect_frequency(ds: xr.Dataset, frequency="detect"):
         and frequency != "detect"
     ):
         raise Warning(
-            "\tManual given frequency is valid, however it does not match detected frequency. Check settings!"
+            "Manual given frequency is valid, however it does not match detected "
+            "frequency. Check settings!"
         )
     if data_freq not in ["A", "S", "M", "D", "H"]:
         raise ValueError(
@@ -379,7 +376,8 @@ def _detect_frequency(ds: xr.Dataset, frequency="detect"):
 
 def _parse_cmip_time_data(ds: xr.Dataset):
     """
-    Converts time data saved as number with format "day as %Y%m%d.%f" to datetime64 format
+    Converts time data saved as number with format "day as %Y%m%d.%f"
+    to datetime64 format
     Parameters
     ----------
     ds: xarray dataset
@@ -405,24 +403,31 @@ def _parse_cmip_time_data(ds: xr.Dataset):
 
 def _open_files(ghi_data: tuple, diffuse_data: tuple, temp_data: tuple):
     """
-    Opens the given files for GHI, diffuse Fraction and temperature, extracts the corresponding variables
-    and merges all three together to one dataset.
+    Opens the given files for GHI, diffuse Fraction and temperature,
+    extracts the corresponding variables and merges all three together to one dataset.
 
     Parameters
     ----------
     ghi_data: Tuple
-        with Filepath for .nc file with diffuse fraction data and variable name in that file
+        with Filepath for .nc file with diffuse fraction data and variable name
+        in that file
     diffuse_data: Tuple
-        Tuple with Filepath for .nc file with diffuse fraction data and variable name in that file
+        Tuple with Filepath for .nc file with diffuse fraction data and variable name
+        in that file
     temp_data: Tuple
-        Tuple with Filepath for .nc file with temperature data (°C or °K) and variable name in that file
+        Tuple with Filepath for .nc file with temperature data (°C or °K) and variable
+        name in that file
 
     Returns
     -------
     ds_tot: xarray dataset
-        merged dataset with all available variables: global_horizontal, diffuse_fraction, temperature
+        merged dataset with all available variables:
+            global_horizontal,
+            diffuse_fraction,
+            temperature
     ds_th_in: xarray dataset
-        dataset of input file without any being processed. Is used later to detect frequency
+        dataset of input file without any being processed.
+        Is used later to detect frequency
     """
     ghi_file, ghi_var = ghi_data
     diffuse_file, diffuse_var = diffuse_data

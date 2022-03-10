@@ -1,15 +1,14 @@
-import pytest
-
 import datetime as dt
 import multiprocessing
 import random
 
 import numpy as np
 import pandas as pd
+import pytest
 import xarray as xr
 
-import gsee.climatedata_interface.pre_gsee_processing as pre
 import gsee.climatedata_interface.kt_h_sinusfunc as cyth
+import gsee.climatedata_interface.pre_gsee_processing as pre
 
 
 def test_add_kd_run_gsee():
@@ -225,7 +224,6 @@ def test_clearness_index_hourly():
         }
     )
     result = pre.clearness_index_hourly(df, coords)
-    check = [0.17764986, 0.76200541, 0.60162922, 0.5717562, 0.7684602]
 
     assert np.array_equal(
         np.round(result["kt_h"].values, 8),

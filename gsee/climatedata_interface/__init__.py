@@ -1,4 +1,3 @@
-__title__ = "gsee interface - use GSEE with annual, seasonal, monthly and daily data"
-__author__ = "Johannes Müller"
+__all__ = ["interface"]
 
 from gsee.climatedata_interface import interface

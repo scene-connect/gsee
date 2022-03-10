@@ -1,7 +1,6 @@
-import pytest
-
 import numpy as np
 import pandas as pd
+import pytest
 import xarray as xr
 
 import gsee.climatedata_interface.interface as interface
@@ -118,7 +117,6 @@ def test_mod_time_dim():
     days = np.unique(result.map(lambda x: x.day))
     assert len(days) == 1
     assert days[0] == 1
-    # assert np.array_equal(result.values, pd.date_range(start='2000-01-01', periods=20, freq='A').values)
     compare = pd.date_range(start="2000-01-01", periods=20, freq="AS")
     for date in result:
         assert date in compare

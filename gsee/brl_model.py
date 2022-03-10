@@ -16,8 +16,8 @@ import datetime
 import math
 
 import ephem
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from gsee import trigon
 
@@ -126,7 +126,7 @@ def _daily_diffuse(obs, ks, sunrise, sunset, p=DEFAULT_PARAMS):
                 + p["b3"] * k_day
                 + p["b4"] * psi(hour, ks)
             )
-            d = 1 / (1 + math.e ** pwr)
+            d = 1 / (1 + math.e**pwr)
         values.append(d)
         # Increase obs.date by one hour for the next iteration
         obs.date = obs.date.datetime() + datetime.timedelta(hours=1)

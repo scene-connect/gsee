@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
-import os
-from setuptools import setup, find_packages, Extension
+from setuptools import Extension, find_packages, setup
 
-# Sets the __version__ variable
-with open("gsee/_version.py", "r") as f:
-    exec(f.read())
+from gsee import __version__
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -52,7 +49,9 @@ setup(
         "xarray >= 0.16, < 0.17",
     ],
     setup_requires=["cython", "numpy >= 1.15.0"],
-    extras_require={"generate_pdfs": ["basemap >= 1.1.0", "seaborn >= 0.9.0"],},
+    extras_require={
+        "generate_pdfs": ["basemap >= 1.1.0", "seaborn >= 0.9.0"],
+    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",

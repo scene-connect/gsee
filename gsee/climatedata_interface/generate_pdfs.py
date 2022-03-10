@@ -1,21 +1,24 @@
-import xarray as xr
-import pandas as pd
-import numpy as np
-from joblib import Parallel, delayed
 import multiprocessing
-from gsee.climatedata_interface.progress import progress_bar
-from seaborn import distplot as sns_distplot
-import matplotlib.pyplot as plt
 import warnings
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import xarray as xr
+from joblib import Parallel, delayed
 from mpl_toolkits.basemap import Basemap
+from seaborn import distplot as sns_distplot
+
+from gsee.climatedata_interface.progress import progress_bar
 
 
 def create_pdfs_from_ds(
     ds, outfile, only_land=True, proximity=True, lat_bounds=(-60, 75)
 ):
     """
-    Creates new file contaning the probabiliy densitiy functions for each month of how often a specific amount of
-    radation can occur. This is done for every grid-cell from the incoming dataset.
+    Creates new file contaning the probabiliy densitiy functions
+    for each month of how often a specific amount of radation can occur.
+    This is done for every grid-cell from the incoming dataset.
 
     Parameters
     ----------
@@ -24,14 +27,16 @@ def create_pdfs_from_ds(
     outfile: string
         path and filename where the resulting file should be stored. Must end with .nc4
     only_land: bool
-        If true: only gridcells whose center is on land will be computed. False: all cells are computed
+        If True: only gridcells whose center is on land will be computed.
+        If False: all cells are computed
     proximity: bool
-        If true: A cell is also computed if one of the surrounding cells is land. This makes shure that all coastal
-        regions are included, as sometimes the middle of a gridcell can be on the ocean, but still a great part is
-        on land. Without this option, all these cases would not be included.
+        If True: A cell is also computed if one of the surrounding cells is land.
+        This makes sure that all coastal regions are included, as sometimes the middle
+        of a gridcell can be on the ocean, but still a great part ison land.
+        Without this option, all these cases would not be included.
     lat_bounds: Tuple
-        containing boundaries for the latitude to be included in the resulting datset. All latitudes between the two
-        values of the tuple will be inlcuded.
+        containing boundaries for the latitude to be included in the resulting datset.
+        All latitudes between the two values of the tuple will be inlcuded.
     """
 
     # Create list of all (lat, lon) pairs to be processed:
@@ -93,13 +98,6 @@ def create_pdfs_from_ds(
             ds_out = xr.merge([ds_out, piece])
 
     ds_out = ds_out.sel(lat=slice(lat_bounds[0], lat_bounds[1]))
-    # encoding_params = {'dtype': 'int16', 'scale_factor': 0.00005, '_FillValue': -9999, 'zlib': True, 'complevel': 2}
-    encoding_params = {
-        "dtype": "float32",
-        "_FillValue": -9999,
-        "zlib": True,
-        "complevel": 4,
-    }
     encoding = {
         "pk": {"dtype": "float32", "_FillValue": -9999, "zlib": True, "complevel": 5},
         "xk": {
@@ -110,15 +108,14 @@ def create_pdfs_from_ds(
             "complevel": 5,
         },
     }
-    # encoding = {k: encoding_params for k in list(ds_out.data_vars)}
     ds_out.to_netcdf(path=outfile, format="NETCDF4", encoding=encoding)
     print("File is saved")
 
 
 def calc_pdfs(ds, i, shr_mem, prog_mem, coords, len_coord_list):
     """
-    Calculates the probability density functions of the radiation for each month of the given dataset and
-    saves it to a new dataset.
+    Calculates the probability density functions of the radiation
+    for each month of the given dataset and saves it to a new dataset.
     Parameters
     ----------
     ds: xarray dataset
@@ -128,8 +125,8 @@ def calc_pdfs(ds, i, shr_mem, prog_mem, coords, len_coord_list):
     shr_mem : shared List
         shared memory where all the calculated xk, pk values are stored
     prog_mem : List
-        list indicating the overall progress of the computation, first value ([0]) is the total number
-        of coordinate tuples to compute.
+        list indicating the overall progress of the computation,
+        first value ([0]) is the total number of coordinate tuples to compute.
     coords: Tuple
         (lat, lon) representing the location of the time-series in ds
     len_coord_list: int
