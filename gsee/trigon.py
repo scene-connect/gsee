@@ -97,10 +97,11 @@ def sun_angles(datetime_index, coords, rise_set_times=None):
     azims = []
     durations = []
 
-    for index, item in enumerate(datetime_index):
+    for item in datetime_index:
         obs.date = item
+        item_date = datetime.datetime(item.year, item.month, item.day)
         # rise/set times are indexed by day, so need to adjust lookup
-        rise_time, set_time = rise_set_times.loc[item.date()]
+        rise_time, set_time = rise_set_times.loc[item_date]
 
         # Set angles, sun altitude and duration based on hour of day:
         if rise_time is not None and item.hour == rise_time.hour:
