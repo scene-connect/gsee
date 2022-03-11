@@ -1,5 +1,4 @@
 basemap >= 1.1.0
-Cython >= 0.28.5
 joblib >= 0.12
 netcdf4
 numpy >= 1.15.0
