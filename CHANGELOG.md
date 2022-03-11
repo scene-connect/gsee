@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (dev)
+## 1.0 (2022-03-11)
 
 * Added: PV model based on the [single-diode model in pvlib-python](https://pvlib-python.readthedocs.io/en/latest/generated/pvlib.pvsystem.singlediode.html)
 * Modified: Reorganise PV models; existing Huld-based models now subclass `HuldPanel`
