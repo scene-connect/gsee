@@ -42,7 +42,7 @@ setup(
         "pvlib >= 0.6.3",
         "pyephem >= 3.7.6",
         "scipy >= 1.1.0",
-        "xarray[parallel] >= 0.16, < 0.17",
+        "xarray[parallel] >= 0.16",
     ],
     setup_requires=["cython", "numpy >= 1.15.0"],
     extras_require={
