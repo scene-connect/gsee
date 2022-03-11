@@ -51,4 +51,4 @@ jobs:
         uses: liskin/gh-problem-matcher-wrap@v1
         with:
           linters: pytest
-          run: python -m pytest -v --cov -n auto
+          run: python -m pytest -v

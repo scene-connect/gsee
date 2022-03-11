@@ -5,11 +5,15 @@ requires = ["setuptools", "wheel", "Cython", "numpy"]
 line-length = 88
 target-version = ['py37', 'py38', "py39", "py310"]
 
+[tool.coverage.run]
+branch = true
+
 [tool.isort]
 profile = "black"
 
 [tool.mypy]
 files = "."
+show_error_context = true
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
@@ -27,3 +31,6 @@ module = [
   "seaborn.*",
   "setuptools.*",
 ]
+
+[tool.pytest.ini_options]
+addopts = "--cov --numprocesses auto --dist loadscope"
