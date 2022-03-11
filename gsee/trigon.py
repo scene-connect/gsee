@@ -60,7 +60,7 @@ def sun_rise_set_times(datetime_index, coords):
     )
 
 
-def sun_angles(datetime_index, coords, rise_set_times=None):
+def sun_angles(datetime_index: pd.DatetimeIndex, coords, rise_set_times=None):
     """
     Calculates sun angles. Returns a dataframe containing `sun_alt`,
     `sun_zenith`, `sun_azimuth` and `duration` over the passed datetime index.
@@ -97,10 +97,11 @@ def sun_angles(datetime_index, coords, rise_set_times=None):
     azims = []
     durations = []
 
-    for index, item in enumerate(datetime_index):
+    for item in datetime_index:
         obs.date = item
+        item_date = datetime.datetime(item.year, item.month, item.day)
         # rise/set times are indexed by day, so need to adjust lookup
-        rise_time, set_time = rise_set_times.loc[item.date()]
+        rise_time, set_time = rise_set_times.loc[item_date]
 
         # Set angles, sun altitude and duration based on hour of day:
         if rise_time is not None and item.hour == rise_time.hour:

@@ -1,6 +1,6 @@
 # Release History
 
-## 0.4.0 (dev)
+## 1.0.0 (dev)
 
 * Added: PV model based on the [single-diode model in pvlib-python](https://pvlib-python.readthedocs.io/en/latest/generated/pvlib.pvsystem.singlediode.html)
 * Modified: Reorganise PV models; existing Huld-based models now subclass `HuldPanel`
@@ -10,6 +10,7 @@
 * Fixed: Improve CF conformity of climate data interface
 * Modified: Clean up and blacken code
 * Modified: Compatibility with more recent versions of pandas and xarray
+* Modified: Dropped support for older versions of Pandas.
 
 ## 0.3.1 (2019-07-23)
 

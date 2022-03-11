@@ -1,7 +1,6 @@
 import os
 import urllib.request
 
-
 PDFS_URL = "https://agitated-khorana-6ac3a1.netlify.com/"
 PDFS_PATH = os.path.join(os.path.dirname(__file__), "pdf_files")
 PDF_FILENAME = "MERRA2_rad3x3_2011-2015-PDFs_land_prox.nc"

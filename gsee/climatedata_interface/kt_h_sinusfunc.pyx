@@ -1,7 +1,11 @@
-from libc.math cimport sin, cos, tan, acos, M_PI
+from libc.math cimport M_PI, acos, cos, sin, tan
+
 import math as m
+
 cimport numpy as np
+
 import numpy as np
+
 
 cpdef double kt_h(double gsc, double lat, double n, double h, double Eo, double sunrise_h, double glob_h):
     """

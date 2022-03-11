@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 import pvlib
 
-from gsee import trigon, cec_tools
+from gsee import cec_tools, trigon
 
 # Constants
 R_TAMB = 20  # Reference ambient temperature (degC)
@@ -189,7 +189,8 @@ class HuldPanel(PVPanel):
         # T_: normalized module temperature
         T_ = (self.c_temp_tamb * tamb + self.c_temp_irrad * irradiance) - R_TMOD
         # NB: np.log without base implies base e or ln
-        # Catching warnings to suppress "RuntimeWarning: invalid value encountered in log"
+        # Catching warnings to suppress
+        # "RuntimeWarning: invalid value encountered in log"
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             eff = (
@@ -197,7 +198,7 @@ class HuldPanel(PVPanel):
                 + self.k_1 * np.log(G_)
                 + self.k_2 * (np.log(G_)) ** 2
                 + T_ * (self.k_3 + self.k_4 * np.log(G_) + self.k_5 * (np.log(G_)) ** 2)
-                + self.k_6 * (T_ ** 2)
+                + self.k_6 * (T_**2)
             )
         eff.fillna(0, inplace=True)  # NaNs in case that G_ was <= 0
         eff[eff < 0] = 0  # Also make sure efficiency can't be negative

@@ -3,22 +3,34 @@ requires = ["setuptools", "wheel", "Cython", "numpy"]
 
 [tool.black]
 line-length = 88
-target-version = ['py37', 'py38']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.github
-  | \.mypy_cache
-  | \.pytest_cache
-  | \.vscode
-  | _build
-  | build
-  | dist
-  | .*\.egg-info
+target-version = ['py37', 'py38', "py39", "py310"]
 
-  # directories without python source files
-  | docs
-)/
-'''
+[tool.coverage.run]
+branch = true
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+files = "."
+show_error_context = true
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+  "ephem.*",
+  "gsee.climatedata_interface.kt_h_sinusfunc",
+  "joblib.*",
+  "matplotlib.*",
+  "mpl_toolkits.*",
+  "numpy.*",
+  "pandas.*",
+  "pvlib.*",
+  "ruamel_yaml",
+  "scipy.*",
+  "seaborn.*",
+  "setuptools.*",
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov --numprocesses auto --dist loadscope"

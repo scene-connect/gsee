@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
-import os
-from setuptools import setup, find_packages, Extension
+from setuptools import Extension, find_packages, setup
 
-# Sets the __version__ variable
-with open("gsee/_version.py", "r") as f:
-    exec(f.read())
+from gsee import __version__
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -22,10 +19,10 @@ except ImportError:
 
 
 setup(
-    name="gsee",
+    name="gsee-redux",
     version=__version__,
-    author="Stefan Pfenninger",
-    author_email="stefan@pfenninger.org",
+    author="ZUoS",
+    author_email="info@zuos.co.uk",
     description="GSEE: Global Solar Energy Estimator",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -41,18 +38,18 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        "dask >= 2.8",
-        "distributed >= 2.8",
         "joblib >= 0.12",
         "numpy >= 1.15.0",
-        "pandas >= 1.0, < 1.1",
+        "pandas >= 1.0",
         "pvlib >= 0.6.3",
         "pyephem >= 3.7.6",
         "scipy >= 1.1.0",
-        "xarray >= 0.16, < 0.17",
+        "xarray[parallel] >= 0.16, < 0.17",
     ],
     setup_requires=["cython", "numpy >= 1.15.0"],
-    extras_require={"generate_pdfs": ["basemap >= 1.1.0", "seaborn >= 0.9.0"],},
+    extras_require={
+        "generate_pdfs": ["basemap >= 1.1.0", "seaborn >= 0.9.0"],
+    },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",

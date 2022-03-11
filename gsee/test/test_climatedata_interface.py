@@ -1,7 +1,6 @@
-import pytest
-
 import numpy as np
 import pandas as pd
+import pytest
 import xarray as xr
 
 import gsee.climatedata_interface.interface as interface
@@ -69,11 +68,11 @@ def test_run_interface_from_dataset():
 
     # Tuples of (sum, nanmean) of resulting PV output
     expected_results = {
-        "A": (1553340.936608, 8090.317378),
-        "S": (1460912.563737, 7608.919602),
-        "M": (1447349.091776, 7538.276519),
-        "D": (1474694.583939, 7680.700958),
-        "H": (47012.573166, 244.857151),
+        "A": (1553336.46124437, 8090.294068981101),
+        "S": (1460912.65352257, 7608.920070430043),
+        "M": (1447349.071502, 7538.276414072912),
+        "D": (1474694.40642167, 7680.700033446191),
+        "H": (47012.57469002, 244.857151),
     }
 
     for freq in ["A", "S", "M", "D", "H"]:
@@ -118,7 +117,6 @@ def test_mod_time_dim():
     days = np.unique(result.map(lambda x: x.day))
     assert len(days) == 1
     assert days[0] == 1
-    # assert np.array_equal(result.values, pd.date_range(start='2000-01-01', periods=20, freq='A').values)
     compare = pd.date_range(start="2000-01-01", periods=20, freq="AS")
     for date in result:
         assert date in compare
