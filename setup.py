@@ -2,8 +2,6 @@
 
 from setuptools import Extension, find_packages, setup
 
-from gsee import __version__
-
 with open("README.md", "r") as f:
     long_description = f.read()
 
@@ -20,7 +18,7 @@ except ImportError:
 
 setup(
     name="gsee-redux",
-    version=__version__,
+    version="0.4.0-dev",
     author="ZUoS",
     author_email="info@zuos.co.uk",
     description="GSEE: Global Solar Energy Estimator",
