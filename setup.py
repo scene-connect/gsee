@@ -19,10 +19,10 @@ except ImportError:
 
 
 setup(
-    name="gsee",
+    name="gsee-redux",
     version=__version__,
-    author="Stefan Pfenninger",
-    author_email="stefan@pfenninger.org",
+    author="ZUoS",
+    author_email="info@zuos.co.uk",
     description="GSEE: Global Solar Energy Estimator",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -40,7 +40,7 @@ setup(
     install_requires=[
         "joblib >= 0.12",
         "numpy >= 1.15.0",
-        "pandas >= 1.0, < 1.1",
+        "pandas >= 1.0",
         "pvlib >= 0.6.3",
         "pyephem >= 3.7.6",
         "scipy >= 1.1.0",
