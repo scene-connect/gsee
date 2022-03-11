@@ -1,2 +1,2 @@
-include README.md LICENSE CITATION CHANGELOG.md
+include README.md LICENSE CHANGELOG.md
 recursive-include gsee/climatedata_interface *.c
