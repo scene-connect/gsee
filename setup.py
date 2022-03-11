@@ -38,15 +38,13 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        "dask >= 2.8",
-        "distributed >= 2.8",
         "joblib >= 0.12",
         "numpy >= 1.15.0",
         "pandas >= 1.0, < 1.1",
         "pvlib >= 0.6.3",
         "pyephem >= 3.7.6",
         "scipy >= 1.1.0",
-        "xarray >= 0.16, < 0.17",
+        "xarray[parallel] >= 0.16, < 0.17",
     ],
     setup_requires=["cython", "numpy >= 1.15.0"],
     extras_require={

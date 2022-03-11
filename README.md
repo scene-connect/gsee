@@ -8,15 +8,18 @@ The development of `GSEE` predates the existence of [`pvlib-python`](https://pvl
 
 ## Installation
 
-`GSEE` requires Python 3. The recommended way to install is through the [Anaconda Python distribution](https://www.continuum.io/downloads) and `conda-forge`:
+```
+pip install gsee-redux
+```
 
-    conda install -c conda-forge gsee
+Currently pip is the only supported installation method.
 
-You can also install with `pip install gsee`, but if you do so, and do not already have `numpy` installed, you will get a compiler error when pip tries to build to `climatedata_interface` Cython extension.
-
+The original GSEE library was intended to be installed through Conda,
+but this is not yet possible for this version.
 ## Documentation
 
-See the [documentation](https://gsee.readthedocs.io/) for more information on `GSEE`'s functionality and for examples.
+See the [original documentation](https://gsee.readthedocs.io/) for more information on
+`GSEE`'s functionality and for examples.
 
 ## License
 

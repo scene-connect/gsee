@@ -29,19 +29,18 @@ def test_sun_rise_set_times(coords_and_datetimes):
 
     assert len(rise_set_times) == len(datetimes) / 24
 
-    assert rise_set_times.loc["2000-01-01"][0] == datetime.datetime(
-        2000, 1, 1, 7, 12, 40, 269239
-    )
-    assert rise_set_times.loc["2000-01-01"][1] == datetime.datetime(
-        2000, 1, 1, 15, 45, 38, 350501
-    )
+    datetimes_01_01 = [
+        datetime.replace(microsecond=0) for datetime in rise_set_times.loc["2000-01-01"]
+    ]
+    datetimes_07_15 = [
+        datetime.replace(microsecond=0) for datetime in rise_set_times.loc["2000-07-15"]
+    ]
 
-    assert rise_set_times.loc["2000-07-15"][0] == datetime.datetime(
-        2000, 7, 15, 3, 44, 19, 170751
-    )
-    assert rise_set_times.loc["2000-07-15"][1] == datetime.datetime(
-        2000, 7, 15, 19, 18, 38, 537100
-    )
+    assert datetimes_01_01[0] == datetime.datetime(2000, 1, 1, 7, 12, 40)
+    assert datetimes_01_01[1] == datetime.datetime(2000, 1, 1, 15, 45, 38)
+
+    assert datetimes_07_15[0] == datetime.datetime(2000, 7, 15, 3, 44, 19)
+    assert datetimes_07_15[1] == datetime.datetime(2000, 7, 15, 19, 18, 38)
 
 
 def test_sun_angles(coords_and_datetimes):

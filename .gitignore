@@ -1,10 +1,15 @@
-*.pyc
+*.py[cod]
 *.egg-info
 .eggs/
 build/
 dist/
+__pycache__/
 *.html
 *.cache/
 *.so
 *.c
+.mypy_cache/
+.pytest_cache/
+.coverage*
+htmlcov/
 gsee/climatedata_interface/pdf_files/*

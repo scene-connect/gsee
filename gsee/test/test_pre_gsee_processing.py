@@ -40,9 +40,9 @@ def test_resample_for_gsee():
     data_l = 48
     data = np.linspace(100, 800, data_l)
     expected_results = {
-        "AS": (366112.891239, 7789.635983),
-        "D": (384515.728381, 8010.744341),
-        "H": (15306.762448, 318.8908843),
+        "AS": (366112.93650651, 7789.636946946969),
+        "D": (384515.3821998, 8010.73712916256),
+        "H": (15306.76284077, 318.8908843),
     }
     for freq in ["AS", "D", "H"]:
         if freq == "H":
@@ -138,8 +138,8 @@ def test_resample_for_gsee():
 def test_resample_for_gsee_with_pdfs():
     np.random.seed(222)
     expected_results = {
-        "AS": (2642.10882, 2642.108819),
-        "MS": (148373.038062, 6451.001654),
+        "AS": (2642.1085149, 2642.1085148954894),
+        "MS": (148373.03146753, 6451.001368153387),
     }
     for freq in ["AS", "MS"]:
         data_l = 2 if freq == "AS" else 24
