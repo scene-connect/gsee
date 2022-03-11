@@ -1,5 +1,4 @@
 basemap >= 1.1.0
-Cython >= 0.28.5
 joblib >= 0.12
 netcdf4
 numpy >= 1.15.0
@@ -8,4 +7,4 @@ pvlib >= 0.6.3
 pyephem >= 3.7.6.0
 scipy >= 1.1.0
 seaborn >= 0.9.0
-xarray[parallel] >= 0.16, < 0.17
+xarray[parallel] >= 0.16
